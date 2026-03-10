@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>CyberSecure Pro | Cybersecurity & AI Expert</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #00d4ff; --secondary: #0a192f; --accent: #64ffda;
+            --dark: #020c1b; --light: #ccd6f6; --gray: #8892b0;
+            --bg-main: #020c1b; --bg-card: rgba(10, 25, 47, 0.7);
+            --bg-nav: rgba(2, 12, 27, 0.9); --text-primary: #ccd6f6;
+            --text-secondary: #8892b0; --border-color: rgba(0, 212, 255, 0.2);
+        }
+        [data-theme="light"] {
+            --primary: #0077b6; --secondary: #e8f4f8; --accent: #00b4d8;
+            --dark: #ffffff; --light: #1a1a2e; --gray: #4a5568;
+            --bg-main: #f0f4f8; --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-nav: rgba(255, 255, 255, 0.95); --text-primary: #1a1a2e;
+            --text-secondary: #4a5568; --border-color: rgba(0, 119, 182, 0.2);
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-main); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+
+        /* Loader */
+        .loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s, visibility 0.5s; }
+        .loader-wrapper.hidden { opacity: 0; visibility: hidden; }
+        .loader { width: 50px; height: 50px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Matrix Background */
+        #matrix-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.15; }
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(135deg, var(--bg-main) 0%, var(--secondary) 100%); }
+
+        /* Navigation */
+        nav { position: fixed; top: 0; width: 100%; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; background: var(--bg-nav); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid var(--border-color); }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; }
+        .nav-links { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav-links a { color: var(--text-primary); text-decoration: none; font-weight: 500; transition: color 0.3s; font-size: 0.95rem; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-controls { display: flex; align-items: center; gap: 0.75rem; }
+        .toggle-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all 0.3s; }
+        .toggle-btn:hover { border-color: var(--primary); }
+        .mobile-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+        .mobile-menu span { width: 25px; height: 3px; background: var(--primary); }
+
+        /* Sections */
+        section { min-height: 100vh; padding: 100px 10%; display: none; }
+        section.active { display: block; }
+        #home.active { display: flex; align-items: center; justify-content: center; }
+
+        .section-title { font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-primary); text-align: center; }
+        .section-title span { color: var(--primary); }
+        .section-subtitle { text-align: center; color: var(--text-secondary); max-width: 600px; margin: 0 auto 3rem; }
+
+        /* Hero */
+        .hero-content { text-align: center; max-width: 800px; }
+        .hero-subtitle { color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; letter-spacing: 3px; text-transform: uppercase; }
+        .hero-title { font-size: 3.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--text-primary), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-description { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 2rem; }
+        .typing-text { font-family: monospace; color: var(--accent); font-size: 1.3rem; margin-bottom: 2rem; }
+        .cursor { animation: blink 1s infinite; }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+        /* Buttons */
+        .btn { padding: 12px 30px; border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s; cursor: pointer; border: none; font-size: 1rem; display: inline-block; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+        .btn-secondary { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-secondary:hover { background: rgba(0, 212, 255, 0.1); }
+        .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        /* Stats */
+        .stats { display: flex; justify-content: center; gap: 4rem; margin-top: 4rem; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; color: var(--primary); }
+        .stat-label { color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Client Logos */
+        .clients-section { padding: 3rem 0; margin-top: 4rem; border-top: 1px solid var(--border-color); }
+        .clients-title { text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
+        .clients-grid { display: flex; justify-content: center; align-items: center; gap: 3rem; flex-wrap: wrap; opacity: 0.6; }
+        .client-logo { font-size: 1.5rem; font-weight: bold; color: var(--text-secondary); padding: 1rem 2rem; border: 1px solid var(--border-color); border-radius: 8px; }
+
+        /* Cards Grid */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 2rem; transition: all 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .card h3 { color: var(--text-primary); margin-bottom: 0.5rem; }
+        .card p { color: var(--text-secondary); font-size: 0.95rem; }
+
+        /* About Grid */
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .about-image-box { width: 100%; height: 400px; background: linear-gradient(135deg, var(--secondary), var(--bg-main)); border-radius: 10px; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 8rem; position: relative; overflow: hidden; }
+        .about-text p { color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .certifications { display: flex; gap: 1rem; flex-wrap: wrap; margin: 2rem 0; }
+        .cert-badge { background: rgba(0, 212, 255, 0.1); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; color: var(--primary); font-weight: 500; font-size: 0.85rem; }
+        .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        .skill-item { display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-size: 0.95rem; }
+        .skill-item::before { content: '>'; color: var(--accent); font-weight: bold; }
+        [dir="rtl"] .skill-item::before { content: '<'; }
+
+        /* Awards */
+        .awards-grid { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin: 3rem 0; }
+        .award-item { text-align: center; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; min-width: 150px; }
+        .award-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .award-item h4 { color: var(--primary); font-size: 0.9rem; }
+        .award-item p { color: var(--text-secondary); font-size: 0.8rem; }
+
+        /* Products */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .product-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 15px; overflow: hidden; transition: all 0.3s; }
+        .product-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+        .product-image { height: 150px; background: linear-gradient(135deg, var(--secondary), var(--bg-main)); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
+        .product-content { padding: 1.5rem; }
+        .product-badge { display: inline-block; padding: 4px 12px; background: rgba(100, 255, 218, 0.1); color: var(--accent); border-radius: 20px; font-size: 0.75rem; margin-bottom: 0.75rem; }
+        .product-card h3 { color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .product-card > .product-content > p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem; }
+        .product-price { font-size: 1.5rem; color: var(--primary); font-weight: bold; margin-bottom: 1rem; }
+        .product-price span { font-size: 0.9rem; color: var(--text-secondary); }
+        .product-features { list-style: none; margin-bottom: 1rem; }
+        .product-features li { color: var(--text-secondary); padding: 3px 0; font-size: 0.85rem; }
+        .product-features li::before { content: '✓ '; color: var(--accent); }
+
+        /* Pricing */
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .pricing-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 15px; padding: 2rem; text-align: center; transition: all 0.3s; position: relative; }
+        .pricing-card.featured { border-color: var(--primary); transform: scale(1.05); }
+        .pricing-card.featured::before { content: 'POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: var(--dark); padding: 4px 20px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .pricing-card h3 { color: var(--text-primary); margin-bottom: 0.5rem; }
+        .pricing-card .price { font-size: 2.5rem; color: var(--primary); font-weight: bold; margin: 1rem 0; }
+        .pricing-card .price span { font-size: 1rem; color: var(--text-secondary); }
+        .pricing-features { list-style: none; margin: 1.5rem 0; text-align: left; }
+        .pricing-features li { padding: 0.5rem 0; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); }
+        .pricing-features li::before { content: '✓ '; color: var(--accent); }
+
+        /* Blog */
+        .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .blog-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; transition: all 0.3s; }
+        .blog-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .blog-image { height: 180px; background: linear-gradient(135deg, var(--secondary), var(--bg-main)); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .blog-content { padding: 1.5rem; }
+        .blog-meta { display: flex; gap: 1rem; margin-bottom: 0.75rem; font-size: 0.8rem; color: var(--text-secondary); }
+        .blog-card h3 { color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .blog-card p { color: var(--text-secondary); font-size: 0.9rem; }
+        .blog-link { color: var(--primary); text-decoration: none; font-weight: 500; display: inline-block; margin-top: 1rem; }
+
+        /* Portfolio */
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+        .portfolio-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
+        .portfolio-image { height: 200px; background: linear-gradient(135deg, var(--secondary), var(--bg-main)); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+        .portfolio-content { padding: 1.5rem; }
+        .portfolio-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .portfolio-tag { background: rgba(0, 212, 255, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; }
+        .portfolio-card h3 { color: var(--text-primary); margin-bottom: 0.5rem; }
+        .portfolio-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
+        .portfolio-stats { display: flex; gap: 2rem; }
+        .portfolio-stat { text-align: center; }
+        .portfolio-stat strong { color: var(--primary); font-size: 1.2rem; display: block; }
+        .portfolio-stat span { color: var(--text-secondary); font-size: 0.8rem; }
+
+        /* FAQ */
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+        .faq-question { padding: 1.25rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text-primary); font-weight: 500; }
+        .faq-question:hover { color: var(--primary); }
+        .faq-icon { font-size: 1.5rem; transition: transform 0.3s; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+        .faq-item.active .faq-answer { max-height: 500px; }
+        .faq-answer p { padding: 0 1.25rem 1.25rem; color: var(--text-secondary); }
+
+        /* Tools Section */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .tool-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 15px; padding: 2rem; }
+        .tool-card h3 { color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .tool-input { width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; margin-bottom: 1rem; }
+        .tool-input:focus { outline: none; border-color: var(--primary); }
+        .tool-result { padding: 1rem; background: var(--bg-main); border-radius: 8px; margin-top: 1rem; }
+        .strength-meter { height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; margin: 1rem 0; }
+        .strength-fill { height: 100%; transition: width 0.3s, background 0.3s; }
+        .quiz-option { display: block; width: 100%; padding: 1rem; margin: 0.5rem 0; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; text-align: left; transition: all 0.3s; }
+        .quiz-option:hover { border-color: var(--primary); }
+        .quiz-option.correct { border-color: var(--accent); background: rgba(100, 255, 218, 0.1); }
+        .quiz-option.wrong { border-color: #ff6b6b; background: rgba(255, 107, 107, 0.1); }
+
+        /* Contact */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .contact-info h3 { color: var(--text-primary); margin-bottom: 1.5rem; }
+        .contact-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; color: var(--text-secondary); }
+        .contact-icon { width: 50px; height: 50px; background: rgba(0, 212, 255, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .social-links { display: flex; gap: 1rem; margin-top: 2rem; }
+        .social-link { width: 45px; height: 45px; background: rgba(0, 212, 255, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); text-decoration: none; transition: all 0.3s; }
+        .social-link:hover { background: var(--primary); color: white; }
+        .contact-form { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 15px; padding: 2rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+
+        /* Newsletter */
+        .newsletter-section { background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 15px; padding: 3rem; text-align: center; margin: 3rem 0; }
+        .newsletter-section h3 { color: var(--dark); margin-bottom: 0.5rem; font-size: 1.5rem; }
+        .newsletter-section p { color: var(--dark); opacity: 0.8; margin-bottom: 1.5rem; }
+        .newsletter-form { display: flex; gap: 1rem; max-width: 500px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+        .newsletter-form input { flex: 1; min-width: 250px; padding: 12px 20px; border: none; border-radius: 8px; font-size: 1rem; }
+        .newsletter-form button { padding: 12px 30px; background: var(--dark); color: var(--primary); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+        /* Resources */
+        .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .resource-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; transition: all 0.3s; cursor: pointer; }
+        .resource-card:hover { border-color: var(--primary); }
+        .resource-icon { font-size: 2.5rem; }
+        .resource-info h4 { color: var(--text-primary); margin-bottom: 0.25rem; }
+        .resource-info p { color: var(--text-secondary); font-size: 0.85rem; }
+
+        /* Partners */
+        .partners-grid { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin: 2rem 0; }
+        .partner-logo { padding: 1.5rem 2rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; font-weight: bold; color: var(--text-secondary); font-size: 1.2rem; }
+
+        /* Booking */
+        .booking-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 15px; padding: 2rem; max-width: 500px; margin: 2rem auto; }
+        .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1rem 0; }
+        .time-slot { padding: 10px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; text-align: center; cursor: pointer; color: var(--text-primary); transition: all 0.3s; }
+        .time-slot:hover, .time-slot.selected { border-color: var(--primary); background: rgba(0, 212, 255, 0.1); }
+
+        /* Testimonials */
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .testimonial-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.5rem; }
+        .testimonial-text { color: var(--text-secondary); font-style: italic; margin-bottom: 1rem; font-size: 0.95rem; }
+        .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+        .author-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .author-info h4 { color: var(--text-primary); font-size: 0.95rem; }
+        .author-info p { color: var(--text-secondary); font-size: 0.8rem; }
+
+        /* Footer */
+        footer { background: var(--bg-nav); padding: 3rem 10% 1rem; border-top: 1px solid var(--border-color); }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-col h4 { color: var(--text-primary); margin-bottom: 1rem; }
+        .footer-col a { display: block; color: var(--text-secondary); text-decoration: none; padding: 0.3rem 0; transition: color 0.3s; }
+        .footer-col a:hover { color: var(--primary); }
+        .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 1rem; }
+        .footer-text { color: var(--text-secondary); }
+        .security-badges { display: flex; gap: 1rem; }
+        .security-badge { padding: 5px 15px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--border-color); border-radius: 5px; font-size: 0.8rem; color: var(--primary); }
+
+        /* Back to Top */
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--primary); color: var(--dark); border: none; border-radius: 50%; cursor: pointer; font-size: 1.5rem; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 999; }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { transform: translateY(-5px); }
+
+        /* Chat Widget */
+        .chat-widget { position: fixed; bottom: 100px; right: 30px; z-index: 998; }
+        .chat-btn { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; border-radius: 50%; cursor: pointer; font-size: 1.5rem; color: white; box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3); }
+        .chat-box { position: absolute; bottom: 70px; right: 0; width: 350px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 15px; overflow: hidden; display: none; }
+        .chat-box.active { display: block; }
+        .chat-header { background: linear-gradient(135deg, var(--primary), var(--accent)); padding: 1rem; color: var(--dark); font-weight: bold; }
+        .chat-messages { height: 250px; padding: 1rem; overflow-y: auto; }
+        .chat-message { margin-bottom: 1rem; }
+        .chat-message.bot { text-align: left; }
+        .chat-message p { display: inline-block; padding: 10px 15px; background: var(--bg-main); border-radius: 15px; color: var(--text-primary); font-size: 0.9rem; }
+        .chat-input { display: flex; padding: 1rem; border-top: 1px solid var(--border-color); }
+        .chat-input input { flex: 1; padding: 10px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); }
+        .chat-input button { padding: 10px 15px; background: var(--primary); border: none; border-radius: 8px; color: var(--dark); margin-left: 0.5rem; cursor: pointer; }
+
+        /* Cookie Banner */
+        .cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-nav); border-top: 1px solid var(--border-color); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1001; transform: translateY(100%); transition: transform 0.3s; }
+        .cookie-banner.visible { transform: translateY(0); }
+        .cookie-text { color: var(--text-secondary); font-size: 0.9rem; }
+        .cookie-buttons { display: flex; gap: 1rem; }
+        .cookie-btn { padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: 500; }
+        .cookie-accept { background: var(--primary); color: var(--dark); border: none; }
+        .cookie-decline { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 15px 30px; border-radius: 10px; font-weight: 600; transition: transform 0.3s; z-index: 2000; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Cart */
+        .cart-icon { position: relative; cursor: pointer; }
+        .cart-count { position: absolute; top: -8px; right: -8px; background: var(--accent); color: var(--dark); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--bg-nav); flex-direction: column; padding: 2rem; gap: 1rem; }
+            .nav-links.active { display: flex; }
+            .mobile-menu { display: flex; }
+            .hero-title { font-size: 2.5rem; }
+            .about-grid, .contact-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .chat-box { width: 300px; right: -10px; }
+            section { padding: 80px 5%; }
+        }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.5s; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader-wrapper" id="loader"><div class="loader"></div></div>
+
+    <!-- Matrix Background -->
+    <canvas id="matrix-bg"></canvas>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo"><div class="logo-icon">S</div><span data-i18n="logo">CyberSecure Pro</span></a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" class="nav-link active" data-section="home" data-i18n="nav.home">Home</a></li>
+            <li><a href="#" class="nav-link" data-section="about" data-i18n="nav.about">About</a></li>
+            <li><a href="#" class="nav-link" data-section="services" data-i18n="nav.services">Services</a></li>
+            <li><a href="#" class="nav-link" data-section="products" data-i18n="nav.products">Products</a></li>
+            <li><a href="#" class="nav-link" data-section="portfolio" data-i18n="nav.portfolio">Portfolio</a></li>
+            <li><a href="#" class="nav-link" data-section="blog" data-i18n="nav.blog">Blog</a></li>
+            <li><a href="#" class="nav-link" data-section="tools" data-i18n="nav.tools">Tools</a></li>
+            <li><a href="#" class="nav-link" data-section="contact" data-i18n="nav.contact">Contact</a></li>
+            <li><div class="cart-icon" onclick="showCart()">&#128722;<span class="cart-count" id="cartCount">0</span></div></li>
+        </ul>
+        <div class="nav-controls">
+            <button class="toggle-btn" onclick="toggleTheme()"><span id="themeIcon">&#9790;</span></button>
+            <button class="toggle-btn" onclick="toggleLanguage()"><span id="langText">AR</span></button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu"><span></span><span></span><span></span></div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="active">
+        <div class="hero-content">
+            <p class="hero-subtitle" data-i18n="hero.subtitle">Cybersecurity Expert & AI Specialist</p>
+            <h1 class="hero-title" data-i18n="hero.title">Securing the Digital Future</h1>
+            <div class="typing-text"><span id="typed"></span><span class="cursor">|</span></div>
+            <p class="hero-description" data-i18n="hero.description">Protecting your digital assets with cutting-edge cybersecurity solutions and leveraging artificial intelligence to stay ahead of emerging threats.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary" onclick="showSection('services')" data-i18n="hero.cta1">Explore Services</a>
+                <a href="#" class="btn btn-secondary" onclick="showSection('contact')" data-i18n="hero.cta2">Get in Touch</a>
+            </div>
+            <div class="stats">
+                <div class="stat-item"><div class="stat-number" data-count="150">0</div><div class="stat-label" data-i18n="stats.projects">Projects Completed</div></div>
+                <div class="stat-item"><div class="stat-number" data-count="50">0</div><div class="stat-label" data-i18n="stats.clients">Happy Clients</div></div>
+                <div class="stat-item"><div class="stat-number" data-count="10">0</div><div class="stat-label" data-i18n="stats.experience">Years Experience</div></div>
+                <div class="stat-item"><div class="stat-number" data-count="24">0</div><div class="stat-label" data-i18n="stats.support">/7 Support</div></div>
+            </div>
+            <div class="clients-section">
+                <p class="clients-title" data-i18n="clients.title">Trusted By Industry Leaders</p>
+                <div class="clients-grid">
+                    <div class="client-logo">TechCorp</div>
+                    <div class="client-logo">FinanceHub</div>
+                    <div class="client-logo">DataSafe</div>
+                    <div class="client-logo">CloudNet</div>
+                    <div class="client-logo">SecureBank</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="about-grid">
+            <div class="about-image"><div class="about-image-box">&#128373;</div></div>
+            <div class="about-text">
+                <h2 class="section-title" data-i18n="about.title">About <span>Me</span></h2>
+                <p data-i18n="about.p1">I am a seasoned cybersecurity professional with over a decade of experience in protecting organizations from digital threats.</p>
+                <p data-i18n="about.p2">With a strong foundation in artificial intelligence and machine learning, I develop intelligent security solutions that can predict, detect, and respond to threats in real-time.</p>
+                <div class="certifications">
+                    <span class="cert-badge">CISSP</span>
+                    <span class="cert-badge">CEH</span>
+                    <span class="cert-badge">OSCP</span>
+                    <span class="cert-badge">AWS Security</span>
+                    <span class="cert-badge">CISM</span>
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-item">Penetration Testing</div>
+                    <div class="skill-item">AI/ML Security</div>
+                    <div class="skill-item">Cloud Security</div>
+                    <div class="skill-item">Threat Intelligence</div>
+                    <div class="skill-item">Incident Response</div>
+                    <div class="skill-item">Security Architecture</div>
+                </div>
+            </div>
+        </div>
+        <div class="awards-grid">
+            <div class="award-item"><div class="award-icon">&#127942;</div><h4>Top 10 Security Expert</h4><p>2023</p></div>
+            <div class="award-item"><div class="award-icon">&#11088;</div><h4>Excellence Award</h4><p>CyberSec Summit</p></div>
+            <div class="award-item"><div class="award-icon">&#128202;</div><h4>500+ Vulnerabilities</h4><p>Discovered</p></div>
+            <div class="award-item"><div class="award-icon">&#128101;</div><h4>50+ Enterprise</h4><p>Clients</p></div>
+        </div>
+        <h3 class="section-title" style="font-size:1.5rem;margin-top:3rem;" data-i18n="partners.title">Technology <span>Partners</span></h3>
+        <div class="partners-grid">
+            <div class="partner-logo">AWS</div>
+            <div class="partner-logo">Microsoft</div>
+            <div class="partner-logo">Google Cloud</div>
+            <div class="partner-logo">Splunk</div>
+            <div class="partner-logo">CrowdStrike</div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services">
+        <h2 class="section-title" data-i18n="services.title">My <span>Services</span></h2>
+        <p class="section-subtitle" data-i18n="services.subtitle">Comprehensive cybersecurity solutions tailored to protect your business.</p>
+        <div class="cards-grid">
+            <div class="card fade-in"><div class="card-icon">&#128737;</div><h3>Security Assessment</h3><p>Comprehensive vulnerability assessments and penetration testing.</p></div>
+            <div class="card fade-in"><div class="card-icon">&#129302;</div><h3>AI Threat Detection</h3><p>Machine learning algorithms for real-time threat prevention.</p></div>
+            <div class="card fade-in"><div class="card-icon">&#9729;</div><h3>Cloud Security</h3><p>Secure your cloud infrastructure with best practices.</p></div>
+            <div class="card fade-in"><div class="card-icon">&#128272;</div><h3>Incident Response</h3><p>Rapid response to minimize damage after security incidents.</p></div>
+            <div class="card fade-in"><div class="card-icon">&#128218;</div><h3>Security Training</h3><p>Comprehensive security awareness training for teams.</p></div>
+            <div class="card fade-in"><div class="card-icon">&#128200;</div><h3>Compliance Consulting</h3><p>Navigate GDPR, HIPAA, PCI-DSS, and SOC 2 requirements.</p></div>
+        </div>
+
+        <!-- Pricing -->
+        <h3 class="section-title" style="margin-top:4rem;" data-i18n="pricing.title">Service <span>Packages</span></h3>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <div class="price">$999<span>/month</span></div>
+                <ul class="pricing-features">
+                    <li>Security Assessment</li>
+                    <li>Monthly Reports</li>
+                    <li>Email Support</li>
+                    <li>Basic Monitoring</li>
+                </ul>
+                <button class="btn btn-secondary" style="width:100%">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Professional</h3>
+                <div class="price">$2,499<span>/month</span></div>
+                <ul class="pricing-features">
+                    <li>Everything in Starter</li>
+                    <li>Penetration Testing</li>
+                    <li>24/7 Monitoring</li>
+                    <li>Incident Response</li>
+                    <li>Priority Support</li>
+                </ul>
+                <button class="btn btn-primary" style="width:100%">Get Started</button>
+            </div>
+            <div class="pricing-card">
+                <h3>Enterprise</h3>
+                <div class="price">Custom</div>
+                <ul class="pricing-features">
+                    <li>Everything in Pro</li>
+                    <li>Dedicated Team</li>
+                    <li>Custom Solutions</li>
+                    <li>On-site Training</li>
+                    <li>SLA Guarantee</li>
+                </ul>
+                <button class="btn btn-secondary" style="width:100%">Contact Us</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products">
+        <h2 class="section-title" data-i18n="products.title">Security <span>Products</span></h2>
+        <p class="section-subtitle">Premium tools and resources to enhance your security posture.</p>
+        <div class="products-grid">
+            <div class="product-card fade-in">
+                <div class="product-image">&#128296;</div>
+                <div class="product-content">
+                    <span class="product-badge">Best Seller</span>
+                    <h3>CyberScan Pro Toolkit</h3>
+                    <p>Complete vulnerability scanning toolkit with automated reporting.</p>
+                    <div class="product-price">$299 <span>one-time</span></div>
+                    <ul class="product-features"><li>50+ Security Scanners</li><li>Automated Reports</li><li>1 Year Updates</li></ul>
+                    <button class="btn btn-primary" style="width:100%" onclick="addToCart('CyberScan Pro',299)">Add to Cart</button>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-image">&#129504;</div>
+                <div class="product-content">
+                    <span class="product-badge">AI-Powered</span>
+                    <h3>ThreatMind AI</h3>
+                    <p>AI-driven threat intelligence platform.</p>
+                    <div class="product-price">$149 <span>/month</span></div>
+                    <ul class="product-features"><li>Real-time Analysis</li><li>Predictive Algorithms</li><li>24/7 Monitoring</li></ul>
+                    <button class="btn btn-primary" style="width:100%" onclick="addToCart('ThreatMind AI',149)">Add to Cart</button>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-image">&#127891;</div>
+                <div class="product-content">
+                    <span class="product-badge">Course</span>
+                    <h3>Cybersecurity Masterclass</h3>
+                    <p>Comprehensive video course on ethical hacking.</p>
+                    <div class="product-price">$499 <span>lifetime</span></div>
+                    <ul class="product-features"><li>100+ Video Lessons</li><li>Hands-on Labs</li><li>Certificate</li></ul>
+                    <button class="btn btn-primary" style="width:100%" onclick="addToCart('Masterclass',499)">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Free Resources -->
+        <h3 class="section-title" style="margin-top:4rem;">Free <span>Resources</span></h3>
+        <div class="resources-grid">
+            <div class="resource-card" onclick="showToast('Downloading...')"><div class="resource-icon">&#128214;</div><div class="resource-info"><h4>Security Checklist</h4><p>PDF - 2.5 MB</p></div></div>
+            <div class="resource-card" onclick="showToast('Downloading...')"><div class="resource-icon">&#128195;</div><div class="resource-info"><h4>Threat Report 2024</h4><p>PDF - 5.1 MB</p></div></div>
+            <div class="resource-card" onclick="showToast('Downloading...')"><div class="resource-icon">&#128203;</div><div class="resource-info"><h4>Compliance Guide</h4><p>PDF - 3.8 MB</p></div></div>
+            <div class="resource-card" onclick="showToast('Downloading...')"><div class="resource-icon">&#128221;</div><div class="resource-info"><h4>Incident Template</h4><p>DOCX - 1.2 MB</p></div></div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="newsletter-section">
+            <h3>Subscribe to Security Updates</h3>
+            <p>Get the latest cybersecurity news and tips delivered to your inbox.</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault();showToast('Subscribed!')">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio">
+        <h2 class="section-title">Case <span>Studies</span></h2>
+        <p class="section-subtitle">Real-world results from security implementations.</p>
+        <div class="portfolio-grid">
+            <div class="portfolio-card fade-in">
+                <div class="portfolio-image">&#127970;</div>
+                <div class="portfolio-content">
+                    <div class="portfolio-tags"><span class="portfolio-tag">Finance</span><span class="portfolio-tag">Penetration Testing</span></div>
+                    <h3>Global Bank Security Overhaul</h3>
+                    <p>Complete security assessment and remediation for a Fortune 500 bank.</p>
+                    <div class="portfolio-stats">
+                        <div class="portfolio-stat"><strong>95%</strong><span>Threat Reduction</span></div>
+                        <div class="portfolio-stat"><strong>200+</strong><span>Vulnerabilities Fixed</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-card fade-in">
+                <div class="portfolio-image">&#127973;</div>
+                <div class="portfolio-content">
+                    <div class="portfolio-tags"><span class="portfolio-tag">Healthcare</span><span class="portfolio-tag">Compliance</span></div>
+                    <h3>Healthcare HIPAA Compliance</h3>
+                    <p>Achieved full HIPAA compliance for a healthcare network.</p>
+                    <div class="portfolio-stats">
+                        <div class="portfolio-stat"><strong>100%</strong><span>Compliance</span></div>
+                        <div class="portfolio-stat"><strong>$2M</strong><span>Fines Avoided</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-card fade-in">
+                <div class="portfolio-image">&#128187;</div>
+                <div class="portfolio-content">
+                    <div class="portfolio-tags"><span class="portfolio-tag">Tech</span><span class="portfolio-tag">AI Security</span></div>
+                    <h3>SaaS Platform Protection</h3>
+                    <p>Implemented AI-driven security for a cloud platform serving 1M+ users.</p>
+                    <div class="portfolio-stats">
+                        <div class="portfolio-stat"><strong>99.9%</strong><span>Uptime</span></div>
+                        <div class="portfolio-stat"><strong>0</strong><span>Breaches</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog">
+        <h2 class="section-title">Latest <span>Articles</span></h2>
+        <p class="section-subtitle">Insights and tips from the cybersecurity world.</p>
+        <div class="blog-grid">
+            <div class="blog-card fade-in">
+                <div class="blog-image">&#128274;</div>
+                <div class="blog-content">
+                    <div class="blog-meta"><span>Jan 15, 2024</span><span>5 min read</span></div>
+                    <h3>Top 10 Security Threats in 2024</h3>
+                    <p>An overview of the most critical cybersecurity threats facing businesses this year.</p>
+                    <a href="#" class="blog-link">Read More →</a>
+                </div>
+            </div>
+            <div class="blog-card fade-in">
+                <div class="blog-image">&#129302;</div>
+                <div class="blog-content">
+                    <div class="blog-meta"><span>Jan 10, 2024</span><span>7 min read</span></div>
+                    <h3>AI in Cybersecurity: Friend or Foe?</h3>
+                    <p>Exploring how artificial intelligence is reshaping the security landscape.</p>
+                    <a href="#" class="blog-link">Read More →</a>
+                </div>
+            </div>
+            <div class="blog-card fade-in">
+                <div class="blog-image">&#9729;</div>
+                <div class="blog-content">
+                    <div class="blog-meta"><span>Jan 5, 2024</span><span>4 min read</span></div>
+                    <h3>Cloud Security Best Practices</h3>
+                    <p>Essential strategies for securing your cloud infrastructure.</p>
+                    <a href="#" class="blog-link">Read More →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section id="tools">
+        <h2 class="section-title">Free Security <span>Tools</span></h2>
+        <p class="section-subtitle">Interactive tools to help assess your security.</p>
+        <div class="tools-grid">
+            <!-- Password Checker -->
+            <div class="tool-card">
+                <h3>&#128274; Password Strength Checker</h3>
+                <input type="password" class="tool-input" id="passwordInput" placeholder="Enter a password to test" oninput="checkPassword()">
+                <div class="strength-meter"><div class="strength-fill" id="strengthFill"></div></div>
+                <div class="tool-result" id="passwordResult">Enter a password to check its strength</div>
+            </div>
+
+            <!-- ROI Calculator -->
+            <div class="tool-card">
+                <h3>&#128200; Security ROI Calculator</h3>
+                <label style="color:var(--text-secondary);font-size:0.9rem;">Annual Revenue ($)</label>
+                <input type="number" class="tool-input" id="revenueInput" placeholder="e.g., 1000000" oninput="calculateROI()">
+                <label style="color:var(--text-secondary);font-size:0.9rem;">Industry</label>
+                <select class="tool-input" id="industryInput" onchange="calculateROI()">
+                    <option value="0.05">Healthcare</option>
+                    <option value="0.04">Finance</option>
+                    <option value="0.03">Technology</option>
+                    <option value="0.02">Retail</option>
+                </select>
+                <div class="tool-result" id="roiResult">Enter your revenue to calculate potential savings</div>
+            </div>
+
+            <!-- Security Quiz -->
+            <div class="tool-card" style="grid-column: span 2;">
+                <h3>&#127919; Security Knowledge Quiz</h3>
+                <div id="quizContainer">
+                    <p id="quizQuestion" style="color:var(--text-primary);margin-bottom:1rem;">What is the most common attack vector for ransomware?</p>
+                    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">SQL Injection</button>
+                    <button class="quiz-option" onclick="checkQuiz(this,'correct')">Phishing Emails</button>
+                    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">DDoS Attacks</button>
+                    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">Physical Access</button>
+                </div>
+                <div class="tool-result" id="quizResult" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <h3 class="section-title" style="margin-top:4rem;">Frequently Asked <span>Questions</span></h3>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)"><span>What services do you offer?</span><span class="faq-icon">+</span></div>
+                <div class="faq-answer"><p>I offer comprehensive cybersecurity services including penetration testing, security assessments, incident response, compliance consulting, and AI-powered threat detection solutions.</p></div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)"><span>How long does a security assessment take?</span><span class="faq-icon">+</span></div>
+                <div class="faq-answer"><p>A typical security assessment takes 2-4 weeks depending on the scope and complexity of your infrastructure. We provide detailed timelines during the initial consultation.</p></div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)"><span>Do you offer ongoing support?</span><span class="faq-icon">+</span></div>
+                <div class="faq-answer"><p>Yes! We offer 24/7 monitoring and support packages. Our team is always available to respond to security incidents and provide guidance.</p></div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)"><span>What industries do you specialize in?</span><span class="faq-icon">+</span></div>
+                <div class="faq-answer"><p>We have extensive experience in finance, healthcare, technology, and e-commerce. Our solutions are tailored to meet industry-specific compliance requirements.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title">Get In <span>Touch</span></h2>
+        <p class="section-subtitle">Ready to enhance your security? Let's discuss how I can help.</p>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <div class="contact-item"><div class="contact-icon">&#128205;</div><div><strong>Location</strong><br>San Francisco, CA</div></div>
+                <div class="contact-item"><div class="contact-icon">&#128231;</div><div><strong>Email</strong><br>contact@cybersecurepro.com</div></div>
+                <div class="contact-item"><div class="contact-icon">&#128222;</div><div><strong>Phone</strong><br>+1 (555) 123-4567</div></div>
+                <div class="contact-item"><div class="contact-icon">&#128336;</div><div><strong>Hours</strong><br>Mon - Fri: 9AM - 6PM</div></div>
+                <div class="social-links">
+                    <a href="#" class="social-link">in</a>
+                    <a href="#" class="social-link">X</a>
+                    <a href="#" class="social-link">&lt;/&gt;</a>
+                    <a href="#" class="social-link">&#9654;</a>
+                </div>
+            </div>
+            <div>
+                <div class="contact-form">
+                    <h3 style="margin-bottom:1.5rem;color:var(--text-primary);">Send a Message</h3>
+                    <form id="contactForm" onsubmit="event.preventDefault();showToast('Message sent!')">
+                        <div class="form-group"><label>Name</label><input type="text" required placeholder="Your name"></div>
+                        <div class="form-group"><label>Email</label><input type="email" required placeholder="your@email.com"></div>
+                        <div class="form-group"><label>Subject</label>
+                            <select><option>General Inquiry</option><option>Security Consultation</option><option>Product Support</option><option>Partnership</option></select>
+                        </div>
+                        <div class="form-group"><label>Message</label><textarea required placeholder="How can I help you?"></textarea></div>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Send Message</button>
+                    </form>
+                </div>
+
+                <!-- Booking -->
+                <div class="booking-card" style="margin-top:2rem;">
+                    <h3 style="color:var(--text-primary);margin-bottom:1rem;">&#128197; Book a Consultation</h3>
+                    <div class="form-group"><label>Select Date</label><input type="date" class="tool-input" id="bookingDate"></div>
+                    <label style="color:var(--text-secondary);">Available Time Slots</label>
+                    <div class="time-slots">
+                        <div class="time-slot" onclick="selectSlot(this)">9:00 AM</div>
+                        <div class="time-slot" onclick="selectSlot(this)">10:00 AM</div>
+                        <div class="time-slot" onclick="selectSlot(this)">11:00 AM</div>
+                        <div class="time-slot" onclick="selectSlot(this)">2:00 PM</div>
+                        <div class="time-slot" onclick="selectSlot(this)">3:00 PM</div>
+                        <div class="time-slot" onclick="selectSlot(this)">4:00 PM</div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%" onclick="showToast('Booking confirmed!')">Book Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <h3 class="section-title" style="margin-top:4rem;">Client <span>Testimonials</span></h3>
+        <div class="testimonial-grid">
+            <div class="testimonial-card"><p class="testimonial-text">"The AI threat detection system has been a game-changer for our security operations."</p><div class="testimonial-author"><div class="author-avatar">&#128100;</div><div class="author-info"><h4>Sarah Johnson</h4><p>CTO, TechCorp</p></div></div></div>
+            <div class="testimonial-card"><p class="testimonial-text">"Outstanding security assessment that identified critical vulnerabilities we had missed."</p><div class="testimonial-author"><div class="author-avatar">&#128100;</div><div class="author-info"><h4>Michael Chen</h4><p>CISO, FinanceHub</p></div></div></div>
+            <div class="testimonial-card"><p class="testimonial-text">"The cybersecurity masterclass transformed our team's capabilities completely."</p><div class="testimonial-author"><div class="author-avatar">&#128100;</div><div class="author-info"><h4>Emily Rodriguez</h4><p>Security Lead</p></div></div></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>CyberSecure Pro</h4>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Protecting businesses with cutting-edge cybersecurity solutions.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="#" onclick="showSection('home')">Home</a>
+                <a href="#" onclick="showSection('about')">About</a>
+                <a href="#" onclick="showSection('services')">Services</a>
+                <a href="#" onclick="showSection('contact')">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <a href="#" onclick="showSection('blog')">Blog</a>
+                <a href="#" onclick="showSection('tools')">Free Tools</a>
+                <a href="#" onclick="showSection('portfolio')">Case Studies</a>
+                <a href="#">Documentation</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-text">&copy; 2024 CyberSecure Pro. All rights reserved.</p>
+            <div class="security-badges">
+                <span class="security-badge">&#128274; SSL Secured</span>
+                <span class="security-badge">&#9989; SOC 2 Compliant</span>
+                <span class="security-badge">&#127919; ISO 27001</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">&#8593;</button>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-box" id="chatBox">
+            <div class="chat-header">&#128172; Live Support</div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot"><p>Hi! How can I help you with your security needs today?</p></div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendChat()">
+                <button onclick="sendChat()">&#10148;</button>
+            </div>
+        </div>
+        <button class="chat-btn" onclick="toggleChat()">&#128172;</button>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <p class="cookie-text">&#127850; We use cookies to enhance your experience. By continuing, you agree to our use of cookies.</p>
+        <div class="cookie-buttons">
+            <button class="cookie-btn cookie-decline" onclick="hideCookie()">Decline</button>
+            <button class="cookie-btn cookie-accept" onclick="acceptCookie()">Accept</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // State
+        let cart = [];
+        let currentLang = localStorage.getItem('lang') || 'en';
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+
+        // Full Translations
+        const translations = {
+            en: {
+                phrases: ['Penetration Testing Expert', 'AI Security Specialist', 'Cloud Security Architect', 'Threat Intelligence Analyst'],
+                nav: { home: 'Home', about: 'About', services: 'Services', products: 'Products', portfolio: 'Portfolio', blog: 'Blog', tools: 'Tools', contact: 'Contact' },
+                hero: { subtitle: 'Cybersecurity Expert & AI Specialist', title: 'Securing the Digital Future', desc: 'Protecting your digital assets with cutting-edge cybersecurity solutions and leveraging artificial intelligence to stay ahead of emerging threats.', cta1: 'Explore Services', cta2: 'Get in Touch' },
+                stats: { projects: 'Projects Completed', clients: 'Happy Clients', experience: 'Years Experience', support: '/7 Support' },
+                clients: { title: 'Trusted By Industry Leaders' },
+                about: { title: 'About Me', p1: 'I am a seasoned cybersecurity professional with over a decade of experience in protecting organizations from digital threats.', p2: 'With a strong foundation in artificial intelligence and machine learning, I develop intelligent security solutions that can predict, detect, and respond to threats in real-time.' },
+                skills: ['Penetration Testing', 'AI/ML Security', 'Cloud Security', 'Threat Intelligence', 'Incident Response', 'Security Architecture'],
+                awards: { t1: 'Top 10 Security Expert', t2: 'Excellence Award', t3: '500+ Vulnerabilities', t4: '50+ Enterprise' },
+                partners: { title: 'Technology Partners' },
+                services: { title: 'My Services', subtitle: 'Comprehensive cybersecurity solutions tailored to protect your business.', s1: { t: 'Security Assessment', d: 'Comprehensive vulnerability assessments and penetration testing.' }, s2: { t: 'AI Threat Detection', d: 'Machine learning algorithms for real-time threat prevention.' }, s3: { t: 'Cloud Security', d: 'Secure your cloud infrastructure with best practices.' }, s4: { t: 'Incident Response', d: 'Rapid response to minimize damage after security incidents.' }, s5: { t: 'Security Training', d: 'Comprehensive security awareness training for teams.' }, s6: { t: 'Compliance Consulting', d: 'Navigate GDPR, HIPAA, PCI-DSS, and SOC 2 requirements.' } },
+                pricing: { title: 'Service Packages', starter: 'Starter', pro: 'Professional', enterprise: 'Enterprise', features: { s1: 'Security Assessment', s2: 'Monthly Reports', s3: 'Email Support', s4: 'Basic Monitoring', p1: 'Everything in Starter', p2: 'Penetration Testing', p3: '24/7 Monitoring', p4: 'Incident Response', p5: 'Priority Support', e1: 'Everything in Pro', e2: 'Dedicated Team', e3: 'Custom Solutions', e4: 'On-site Training', e5: 'SLA Guarantee' }, cta: 'Get Started', contact: 'Contact Us' },
+                products: { title: 'Security Products', subtitle: 'Premium tools and resources to enhance your security posture.', badges: { best: 'Best Seller', ai: 'AI-Powered', course: 'Course' }, p1: { t: 'CyberScan Pro Toolkit', d: 'Complete vulnerability scanning toolkit with automated reporting.', f: ['50+ Security Scanners', 'Automated Reports', '1 Year Updates'] }, p2: { t: 'ThreatMind AI', d: 'AI-driven threat intelligence platform.', f: ['Real-time Analysis', 'Predictive Algorithms', '24/7 Monitoring'] }, p3: { t: 'Cybersecurity Masterclass', d: 'Comprehensive video course on ethical hacking.', f: ['100+ Video Lessons', 'Hands-on Labs', 'Certificate'] }, addToCart: 'Add to Cart' },
+                resources: { title: 'Free Resources', r1: 'Security Checklist', r2: 'Threat Report 2024', r3: 'Compliance Guide', r4: 'Incident Template' },
+                newsletter: { title: 'Subscribe to Security Updates', subtitle: 'Get the latest cybersecurity news and tips delivered to your inbox.', placeholder: 'Enter your email', btn: 'Subscribe' },
+                portfolio: { title: 'Case Studies', subtitle: 'Real-world results from security implementations.', p1: { t: 'Global Bank Security Overhaul', d: 'Complete security assessment and remediation for a Fortune 500 bank.', s1: 'Threat Reduction', s2: 'Vulnerabilities Fixed' }, p2: { t: 'Healthcare HIPAA Compliance', d: 'Achieved full HIPAA compliance for a healthcare network.', s1: 'Compliance', s2: 'Fines Avoided' }, p3: { t: 'SaaS Platform Protection', d: 'Implemented AI-driven security for a cloud platform serving 1M+ users.', s1: 'Uptime', s2: 'Breaches' } },
+                blog: { title: 'Latest Articles', subtitle: 'Insights and tips from the cybersecurity world.', readMore: 'Read More →', b1: { t: 'Top 10 Security Threats in 2024', d: 'An overview of the most critical cybersecurity threats facing businesses this year.' }, b2: { t: 'AI in Cybersecurity: Friend or Foe?', d: 'Exploring how artificial intelligence is reshaping the security landscape.' }, b3: { t: 'Cloud Security Best Practices', d: 'Essential strategies for securing your cloud infrastructure.' } },
+                tools: { title: 'Free Security Tools', subtitle: 'Interactive tools to help assess your security.', password: { title: 'Password Strength Checker', placeholder: 'Enter a password to test', result: 'Enter a password to check its strength', weak: 'Weak', medium: 'Medium', strong: 'Strong', great: 'Great password!', tips: ['At least 8 characters', 'Add uppercase letters', 'Add numbers', 'Add special characters'] }, roi: { title: 'Security ROI Calculator', revenue: 'Annual Revenue ($)', industry: 'Industry', placeholder: 'e.g., 1000000', result: 'Enter your revenue to calculate potential savings', breach: 'Potential breach cost', investment: 'Recommended investment', roiLabel: 'Potential ROI' }, quiz: { title: 'Security Knowledge Quiz', question: 'What is the most common attack vector for ransomware?', options: ['SQL Injection', 'Phishing Emails', 'DDoS Attacks', 'Physical Access'], correct: 'Correct! Phishing is responsible for 90%+ of ransomware attacks.', incorrect: 'Incorrect. Phishing emails are the most common vector.' }, industries: ['Healthcare', 'Finance', 'Technology', 'Retail'] },
+                faq: { title: 'Frequently Asked Questions', q1: 'What services do you offer?', a1: 'I offer comprehensive cybersecurity services including penetration testing, security assessments, incident response, compliance consulting, and AI-powered threat detection solutions.', q2: 'How long does a security assessment take?', a2: 'A typical security assessment takes 2-4 weeks depending on the scope and complexity of your infrastructure.', q3: 'Do you offer ongoing support?', a3: 'Yes! We offer 24/7 monitoring and support packages. Our team is always available to respond to security incidents.', q4: 'What industries do you specialize in?', a4: 'We have extensive experience in finance, healthcare, technology, and e-commerce.' },
+                contact: { title: 'Get In Touch', subtitle: 'Ready to enhance your security? Let\'s discuss how I can help.', info: 'Contact Information', location: 'Location', locationVal: 'San Francisco, CA', email: 'Email', phone: 'Phone', hours: 'Hours', hoursVal: 'Mon - Fri: 9AM - 6PM', form: { title: 'Send a Message', name: 'Name', namePh: 'Your name', emailPh: 'your@email.com', subject: 'Subject', subjects: ['General Inquiry', 'Security Consultation', 'Product Support', 'Partnership'], message: 'Message', messagePh: 'How can I help you?', submit: 'Send Message' }, booking: { title: 'Book a Consultation', date: 'Select Date', slots: 'Available Time Slots', btn: 'Book Now' } },
+                testimonials: { title: 'Client Testimonials', t1: { text: 'The AI threat detection system has been a game-changer for our security operations.', name: 'Sarah Johnson', role: 'CTO, TechCorp' }, t2: { text: 'Outstanding security assessment that identified critical vulnerabilities we had missed.', name: 'Michael Chen', role: 'CISO, FinanceHub' }, t3: { text: 'The cybersecurity masterclass transformed our team\'s capabilities completely.', name: 'Emily Rodriguez', role: 'Security Lead' } },
+                footer: { desc: 'Protecting businesses with cutting-edge cybersecurity solutions.', quick: 'Quick Links', resources: 'Resources', legal: 'Legal', privacy: 'Privacy Policy', terms: 'Terms of Service', cookie: 'Cookie Policy', disclaimer: 'Disclaimer', copy: '© 2024 CyberSecure Pro. All rights reserved.', badges: ['SSL Secured', 'SOC 2 Compliant', 'ISO 27001'] },
+                chat: { title: 'Live Support', welcome: 'Hi! How can I help you with your security needs today?', placeholder: 'Type a message...', reply: 'Thanks for your message! Our team will get back to you shortly. For urgent matters, please call us directly.' },
+                cookie: { text: 'We use cookies to enhance your experience. By continuing, you agree to our use of cookies.', accept: 'Accept', decline: 'Decline' },
+                toast: { added: 'Added to cart!', empty: 'Cart is empty', subscribed: 'Subscribed!', sent: 'Message sent!', booked: 'Booking confirmed!', download: 'Downloading...' }
+            },
+            ar: {
+                phrases: ['خبير اختبار الاختراق', 'متخصص أمن الذكاء الاصطناعي', 'مهندس أمن السحابة', 'محلل استخبارات التهديدات'],
+                nav: { home: 'الرئيسية', about: 'من أنا', services: 'الخدمات', products: 'المنتجات', portfolio: 'الأعمال', blog: 'المدونة', tools: 'الأدوات', contact: 'تواصل معنا' },
+                hero: { subtitle: 'خبير الأمن السيبراني والذكاء الاصطناعي', title: 'تأمين المستقبل الرقمي', desc: 'حماية أصولك الرقمية بحلول أمن سيبراني متطورة والاستفادة من الذكاء الاصطناعي للبقاء في صدارة التهديدات الناشئة.', cta1: 'استكشف الخدمات', cta2: 'تواصل معنا' },
+                stats: { projects: 'مشروع مكتمل', clients: 'عميل سعيد', experience: 'سنوات خبرة', support: 'دعم 24/7' },
+                clients: { title: 'موثوق من قادة الصناعة' },
+                about: { title: 'من أنا', p1: 'أنا متخصص في الأمن السيبراني بخبرة تزيد عن عقد من الزمن في حماية المؤسسات من التهديدات الرقمية.', p2: 'مع أساس قوي في الذكاء الاصطناعي والتعلم الآلي، أقوم بتطوير حلول أمنية ذكية يمكنها التنبؤ بالتهديدات واكتشافها والاستجابة لها.' },
+                skills: ['اختبار الاختراق', 'أمن الذكاء الاصطناعي', 'أمن السحابة', 'استخبارات التهديدات', 'الاستجابة للحوادث', 'هندسة الأمان'],
+                awards: { t1: 'أفضل 10 خبراء أمن', t2: 'جائزة التميز', t3: '+500 ثغرة مكتشفة', t4: '+50 عميل مؤسسي' },
+                partners: { title: 'شركاء التقنية' },
+                services: { title: 'خدماتي', subtitle: 'حلول أمن سيبراني شاملة مصممة لحماية عملك.', s1: { t: 'تقييم الأمان', d: 'تقييمات شاملة للثغرات واختبار الاختراق.' }, s2: { t: 'كشف التهديدات بالذكاء الاصطناعي', d: 'خوارزميات التعلم الآلي للوقاية من التهديدات.' }, s3: { t: 'أمن السحابة', d: 'تأمين البنية التحتية السحابية بأفضل الممارسات.' }, s4: { t: 'الاستجابة للحوادث', d: 'استجابة سريعة لتقليل الأضرار بعد الحوادث الأمنية.' }, s5: { t: 'التدريب الأمني', d: 'تدريب شامل على الوعي الأمني للفرق.' }, s6: { t: 'استشارات الامتثال', d: 'التنقل في متطلبات GDPR و HIPAA و PCI-DSS و SOC 2.' } },
+                pricing: { title: 'باقات الخدمات', starter: 'المبتدئ', pro: 'الاحترافي', enterprise: 'المؤسسات', features: { s1: 'تقييم الأمان', s2: 'تقارير شهرية', s3: 'دعم بالبريد الإلكتروني', s4: 'مراقبة أساسية', p1: 'كل ما في المبتدئ', p2: 'اختبار الاختراق', p3: 'مراقبة 24/7', p4: 'الاستجابة للحوادث', p5: 'دعم أولوية', e1: 'كل ما في الاحترافي', e2: 'فريق مخصص', e3: 'حلول مخصصة', e4: 'تدريب في الموقع', e5: 'ضمان SLA' }, cta: 'ابدأ الآن', contact: 'تواصل معنا' },
+                products: { title: 'منتجات الأمان', subtitle: 'أدوات وموارد متميزة لتعزيز وضعيتك الأمنية.', badges: { best: 'الأكثر مبيعاً', ai: 'بالذكاء الاصطناعي', course: 'دورة' }, p1: { t: 'مجموعة CyberScan Pro', d: 'مجموعة أدوات فحص الثغرات مع التقارير الآلية.', f: ['+50 ماسح أمني', 'تقارير آلية', 'تحديثات لمدة سنة'] }, p2: { t: 'ThreatMind AI', d: 'منصة استخبارات تهديدات بالذكاء الاصطناعي.', f: ['تحليل فوري', 'خوارزميات تنبؤية', 'مراقبة 24/7'] }, p3: { t: 'دورة الأمن السيبراني', d: 'دورة فيديو شاملة عن القرصنة الأخلاقية.', f: ['+100 درس فيديو', 'مختبرات عملية', 'شهادة'] }, addToCart: 'أضف إلى السلة' },
+                resources: { title: 'موارد مجانية', r1: 'قائمة فحص الأمان', r2: 'تقرير التهديدات 2024', r3: 'دليل الامتثال', r4: 'نموذج الحوادث' },
+                newsletter: { title: 'اشترك في تحديثات الأمان', subtitle: 'احصل على أحدث أخبار ونصائح الأمن السيبراني.', placeholder: 'أدخل بريدك الإلكتروني', btn: 'اشترك' },
+                portfolio: { title: 'دراسات الحالة', subtitle: 'نتائج حقيقية من تطبيقات الأمان.', p1: { t: 'إصلاح أمان بنك عالمي', d: 'تقييم أمني كامل ومعالجة لبنك Fortune 500.', s1: 'تقليل التهديدات', s2: 'ثغرات تم إصلاحها' }, p2: { t: 'امتثال HIPAA للرعاية الصحية', d: 'تحقيق امتثال HIPAA الكامل لشبكة رعاية صحية.', s1: 'الامتثال', s2: 'غرامات تم تجنبها' }, p3: { t: 'حماية منصة SaaS', d: 'تنفيذ أمان بالذكاء الاصطناعي لمنصة سحابية تخدم +1 مليون مستخدم.', s1: 'وقت التشغيل', s2: 'الاختراقات' } },
+                blog: { title: 'أحدث المقالات', subtitle: 'رؤى ونصائح من عالم الأمن السيبراني.', readMore: 'اقرأ المزيد ←', b1: { t: 'أهم 10 تهديدات أمنية في 2024', d: 'نظرة عامة على أهم تهديدات الأمن السيبراني التي تواجه الشركات.' }, b2: { t: 'الذكاء الاصطناعي في الأمن السيبراني', d: 'استكشاف كيف يعيد الذكاء الاصطناعي تشكيل مشهد الأمان.' }, b3: { t: 'أفضل ممارسات أمن السحابة', d: 'استراتيجيات أساسية لتأمين البنية التحتية السحابية.' } },
+                tools: { title: 'أدوات أمان مجانية', subtitle: 'أدوات تفاعلية لتقييم أمانك.', password: { title: 'فاحص قوة كلمة المرور', placeholder: 'أدخل كلمة مرور للاختبار', result: 'أدخل كلمة مرور للتحقق من قوتها', weak: 'ضعيفة', medium: 'متوسطة', strong: 'قوية', great: 'كلمة مرور ممتازة!', tips: ['8 أحرف على الأقل', 'أضف أحرف كبيرة', 'أضف أرقام', 'أضف رموز خاصة'] }, roi: { title: 'حاسبة عائد الاستثمار الأمني', revenue: 'الإيرادات السنوية ($)', industry: 'الصناعة', placeholder: 'مثال: 1000000', result: 'أدخل إيراداتك لحساب الوفورات المحتملة', breach: 'تكلفة الاختراق المحتملة', investment: 'الاستثمار الموصى به', roiLabel: 'العائد المحتمل' }, quiz: { title: 'اختبار المعرفة الأمنية', question: 'ما هو أكثر ناقل هجوم شيوعاً لبرامج الفدية؟', options: ['حقن SQL', 'رسائل التصيد الاحتيالي', 'هجمات DDoS', 'الوصول المادي'], correct: 'صحيح! التصيد الاحتيالي مسؤول عن +90% من هجمات برامج الفدية.', incorrect: 'خاطئ. رسائل التصيد الاحتيالي هي الناقل الأكثر شيوعاً.' }, industries: ['الرعاية الصحية', 'المالية', 'التقنية', 'التجزئة'] },
+                faq: { title: 'الأسئلة الشائعة', q1: 'ما الخدمات التي تقدمها؟', a1: 'أقدم خدمات أمن سيبراني شاملة تشمل اختبار الاختراق وتقييمات الأمان والاستجابة للحوادث واستشارات الامتثال وحلول الكشف عن التهديدات بالذكاء الاصطناعي.', q2: 'كم يستغرق تقييم الأمان؟', a2: 'يستغرق تقييم الأمان النموذجي 2-4 أسابيع حسب نطاق وتعقيد البنية التحتية.', q3: 'هل تقدم دعم مستمر؟', a3: 'نعم! نقدم باقات مراقبة ودعم 24/7. فريقنا متاح دائماً للاستجابة للحوادث الأمنية.', q4: 'ما الصناعات التي تتخصص فيها؟', a4: 'لدينا خبرة واسعة في المالية والرعاية الصحية والتقنية والتجارة الإلكترونية.' },
+                contact: { title: 'تواصل معنا', subtitle: 'هل أنت مستعد لتعزيز أمانك؟ دعنا نناقش كيف يمكنني المساعدة.', info: 'معلومات الاتصال', location: 'الموقع', locationVal: 'سان فرانسيسكو، كاليفورنيا', email: 'البريد الإلكتروني', phone: 'الهاتف', hours: 'ساعات العمل', hoursVal: 'الإثنين - الجمعة: 9 ص - 6 م', form: { title: 'أرسل رسالة', name: 'الاسم', namePh: 'اسمك', emailPh: 'your@email.com', subject: 'الموضوع', subjects: ['استفسار عام', 'استشارة أمنية', 'دعم المنتجات', 'شراكة'], message: 'الرسالة', messagePh: 'كيف يمكنني مساعدتك؟', submit: 'إرسال الرسالة' }, booking: { title: 'احجز استشارة', date: 'اختر التاريخ', slots: 'الأوقات المتاحة', btn: 'احجز الآن' } },
+                testimonials: { title: 'آراء العملاء', t1: { text: 'كان نظام الكشف عن التهديدات بالذكاء الاصطناعي نقطة تحول لعملياتنا الأمنية.', name: 'سارة جونسون', role: 'المدير التقني، TechCorp' }, t2: { text: 'تقييم أمني متميز حدد ثغرات حرجة فاتتنا.', name: 'مايكل تشين', role: 'مدير أمن المعلومات، FinanceHub' }, t3: { text: 'حولت دورة الأمن السيبراني قدرات فريقنا بالكامل.', name: 'إيميلي رودريغيز', role: 'قائد الأمن' } },
+                footer: { desc: 'حماية الشركات بحلول أمن سيبراني متطورة.', quick: 'روابط سريعة', resources: 'الموارد', legal: 'قانوني', privacy: 'سياسة الخصوصية', terms: 'شروط الخدمة', cookie: 'سياسة ملفات تعريف الارتباط', disclaimer: 'إخلاء المسؤولية', copy: '© 2024 CyberSecure Pro. جميع الحقوق محفوظة.', badges: ['SSL مؤمن', 'متوافق SOC 2', 'ISO 27001'] },
+                chat: { title: 'الدعم المباشر', welcome: 'مرحباً! كيف يمكنني مساعدتك في احتياجاتك الأمنية اليوم؟', placeholder: 'اكتب رسالة...', reply: 'شكراً لرسالتك! سيتواصل معك فريقنا قريباً. للأمور العاجلة، يرجى الاتصال بنا مباشرة.' },
+                cookie: { text: 'نستخدم ملفات تعريف الارتباط لتحسين تجربتك. بالاستمرار، فإنك توافق على استخدامنا لها.', accept: 'قبول', decline: 'رفض' },
+                toast: { added: 'تمت الإضافة للسلة!', empty: 'السلة فارغة', subscribed: 'تم الاشتراك!', sent: 'تم إرسال الرسالة!', booked: 'تم تأكيد الحجز!', download: 'جاري التحميل...' }
+            }
+        };
+
+        // Initialize
+        window.onload = function() {
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1000);
+            initMatrix();
+            setTheme(currentTheme);
+            setLanguage(currentLang);
+            typeEffect();
+            animateStats();
+            if (!localStorage.getItem('cookieAccepted')) setTimeout(() => document.getElementById('cookieBanner').classList.add('visible'), 2000);
+            document.querySelectorAll('.fade-in').forEach(el => setTimeout(() => el.classList.add('visible'), 500));
+        };
+
+        // Matrix background
+        function initMatrix() {
+            const canvas = document.getElementById('matrix-bg');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const chars = '01';
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+            function draw() {
+                ctx.fillStyle = 'rgba(2, 12, 27, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00d4ff';
+                ctx.font = fontSize + 'px monospace';
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }
+            setInterval(draw, 50);
+        }
+
+        // Theme
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(currentTheme);
+            localStorage.setItem('theme', currentTheme);
+        }
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('themeIcon').innerHTML = theme === 'dark' ? '&#9790;' : '&#9728;';
+        }
+
+        // Language
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            setLanguage(currentLang);
+            localStorage.setItem('lang', currentLang);
+        }
+
+        function setLanguage(lang) {
+            const t = translations[lang];
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.getElementById('langText').textContent = lang === 'en' ? 'AR' : 'EN';
+
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(el => {
+                const section = el.dataset.section;
+                if (t.nav[section]) el.textContent = t.nav[section];
+            });
+
+            // Hero
+            document.querySelector('.hero-subtitle').textContent = t.hero.subtitle;
+            document.querySelector('.hero-title').textContent = t.hero.title;
+            document.querySelector('.hero-description').textContent = t.hero.desc;
+            document.querySelectorAll('.cta-buttons .btn')[0].textContent = t.hero.cta1;
+            document.querySelectorAll('.cta-buttons .btn')[1].textContent = t.hero.cta2;
+
+            // Stats
+            const statLabels = document.querySelectorAll('.stat-label');
+            statLabels[0].textContent = t.stats.projects;
+            statLabels[1].textContent = t.stats.clients;
+            statLabels[2].textContent = t.stats.experience;
+            statLabels[3].textContent = t.stats.support;
+
+            // Clients
+            document.querySelector('.clients-title').textContent = t.clients.title;
+
+            // About
+            document.querySelector('#about .section-title').innerHTML = lang === 'ar' ? 'من <span>أنا</span>' : 'About <span>Me</span>';
+            const aboutP = document.querySelectorAll('.about-text p');
+            aboutP[0].textContent = t.about.p1;
+            aboutP[1].textContent = t.about.p2;
+            document.querySelectorAll('.skill-item').forEach((el, i) => { if (t.skills[i]) el.textContent = t.skills[i]; });
+
+            // Awards
+            const awards = document.querySelectorAll('.award-item h4');
+            awards[0].textContent = t.awards.t1;
+            awards[1].textContent = t.awards.t2;
+            awards[2].textContent = t.awards.t3;
+            awards[3].textContent = t.awards.t4;
+
+            // Partners
+            document.querySelector('#about .section-title:last-of-type').innerHTML = lang === 'ar' ? 'شركاء <span>التقنية</span>' : 'Technology <span>Partners</span>';
+
+            // Services
+            document.querySelector('#services .section-title').innerHTML = lang === 'ar' ? '<span>خدماتي</span>' : 'My <span>Services</span>';
+            document.querySelector('#services .section-subtitle').textContent = t.services.subtitle;
+            const services = document.querySelectorAll('#services .card');
+            const sKeys = ['s1', 's2', 's3', 's4', 's5', 's6'];
+            services.forEach((card, i) => {
+                if (t.services[sKeys[i]]) {
+                    card.querySelector('h3').textContent = t.services[sKeys[i]].t;
+                    card.querySelector('p').textContent = t.services[sKeys[i]].d;
+                }
+            });
+
+            // Pricing
+            document.querySelectorAll('#services .section-title')[1].innerHTML = lang === 'ar' ? 'باقات <span>الخدمات</span>' : 'Service <span>Packages</span>';
+            const pricingCards = document.querySelectorAll('.pricing-card');
+            pricingCards[0].querySelector('h3').textContent = t.pricing.starter;
+            pricingCards[1].querySelector('h3').textContent = t.pricing.pro;
+            pricingCards[2].querySelector('h3').textContent = t.pricing.enterprise;
+
+            // Products
+            document.querySelector('#products .section-title').innerHTML = lang === 'ar' ? 'منتجات <span>الأمان</span>' : 'Security <span>Products</span>';
+            document.querySelector('#products .section-subtitle').textContent = t.products.subtitle;
+
+            // Resources
+            document.querySelectorAll('#products .section-title')[1].innerHTML = lang === 'ar' ? 'موارد <span>مجانية</span>' : 'Free <span>Resources</span>';
+            const resources = document.querySelectorAll('.resource-info h4');
+            resources[0].textContent = t.resources.r1;
+            resources[1].textContent = t.resources.r2;
+            resources[2].textContent = t.resources.r3;
+            resources[3].textContent = t.resources.r4;
+
+            // Newsletter
+            document.querySelector('.newsletter-section h3').textContent = t.newsletter.title;
+            document.querySelector('.newsletter-section p').textContent = t.newsletter.subtitle;
+            document.querySelector('.newsletter-form input').placeholder = t.newsletter.placeholder;
+            document.querySelector('.newsletter-form button').textContent = t.newsletter.btn;
+
+            // Portfolio
+            document.querySelector('#portfolio .section-title').innerHTML = lang === 'ar' ? 'دراسات <span>الحالة</span>' : 'Case <span>Studies</span>';
+            document.querySelector('#portfolio .section-subtitle').textContent = t.portfolio.subtitle;
+
+            // Blog
+            document.querySelector('#blog .section-title').innerHTML = lang === 'ar' ? 'أحدث <span>المقالات</span>' : 'Latest <span>Articles</span>';
+            document.querySelector('#blog .section-subtitle').textContent = t.blog.subtitle;
+            document.querySelectorAll('.blog-link').forEach(el => el.textContent = t.blog.readMore);
+
+            // Tools
+            document.querySelector('#tools .section-title').innerHTML = lang === 'ar' ? 'أدوات أمان <span>مجانية</span>' : 'Free Security <span>Tools</span>';
+            document.querySelector('#tools .section-subtitle').textContent = t.tools.subtitle;
+            document.querySelectorAll('.tool-card h3')[0].innerHTML = '&#128274; ' + t.tools.password.title;
+            document.getElementById('passwordInput').placeholder = t.tools.password.placeholder;
+            document.getElementById('passwordResult').textContent = t.tools.password.result;
+            document.querySelectorAll('.tool-card h3')[1].innerHTML = '&#128200; ' + t.tools.roi.title;
+            document.getElementById('roiResult').textContent = t.tools.roi.result;
+            document.querySelectorAll('.tool-card h3')[2].innerHTML = '&#127919; ' + t.tools.quiz.title;
+            document.getElementById('quizQuestion').textContent = t.tools.quiz.question;
+            document.querySelectorAll('.quiz-option').forEach((btn, i) => btn.textContent = t.tools.quiz.options[i]);
+
+            // FAQ
+            document.querySelectorAll('#tools .section-title')[1].innerHTML = lang === 'ar' ? 'الأسئلة <span>الشائعة</span>' : 'Frequently Asked <span>Questions</span>';
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems[0].querySelector('.faq-question span:first-child').textContent = t.faq.q1;
+            faqItems[0].querySelector('.faq-answer p').textContent = t.faq.a1;
+            faqItems[1].querySelector('.faq-question span:first-child').textContent = t.faq.q2;
+            faqItems[1].querySelector('.faq-answer p').textContent = t.faq.a2;
+            faqItems[2].querySelector('.faq-question span:first-child').textContent = t.faq.q3;
+            faqItems[2].querySelector('.faq-answer p').textContent = t.faq.a3;
+            faqItems[3].querySelector('.faq-question span:first-child').textContent = t.faq.q4;
+            faqItems[3].querySelector('.faq-answer p').textContent = t.faq.a4;
+
+            // Contact
+            document.querySelector('#contact .section-title').innerHTML = lang === 'ar' ? 'تواصل <span>معنا</span>' : 'Get In <span>Touch</span>';
+            document.querySelector('#contact .section-subtitle').textContent = t.contact.subtitle;
+            document.querySelector('.contact-info h3').textContent = t.contact.info;
+            document.querySelector('.contact-form h3').textContent = t.contact.form.title;
+            document.querySelectorAll('.contact-form label')[0].textContent = t.contact.form.name;
+            document.querySelectorAll('.contact-form label')[1].textContent = t.contact.form.email;
+            document.querySelectorAll('.contact-form label')[2].textContent = t.contact.form.subject;
+            document.querySelectorAll('.contact-form label')[3].textContent = t.contact.form.message;
+            document.querySelector('.contact-form button').textContent = t.contact.form.submit;
+            document.querySelector('.booking-card h3').innerHTML = '&#128197; ' + t.contact.booking.title;
+            document.querySelector('.booking-card .btn').textContent = t.contact.booking.btn;
+
+            // Testimonials
+            document.querySelectorAll('#contact .section-title')[1].innerHTML = lang === 'ar' ? 'آراء <span>العملاء</span>' : 'Client <span>Testimonials</span>';
+            const testimonials = document.querySelectorAll('.testimonial-card');
+            testimonials[0].querySelector('.testimonial-text').textContent = '"' + t.testimonials.t1.text + '"';
+            testimonials[0].querySelector('.author-info h4').textContent = t.testimonials.t1.name;
+            testimonials[0].querySelector('.author-info p').textContent = t.testimonials.t1.role;
+            testimonials[1].querySelector('.testimonial-text').textContent = '"' + t.testimonials.t2.text + '"';
+            testimonials[1].querySelector('.author-info h4').textContent = t.testimonials.t2.name;
+            testimonials[1].querySelector('.author-info p').textContent = t.testimonials.t2.role;
+            testimonials[2].querySelector('.testimonial-text').textContent = '"' + t.testimonials.t3.text + '"';
+            testimonials[2].querySelector('.author-info h4').textContent = t.testimonials.t3.name;
+            testimonials[2].querySelector('.author-info p').textContent = t.testimonials.t3.role;
+
+            // Footer
+            document.querySelector('.footer-col:first-child p').textContent = t.footer.desc;
+            document.querySelectorAll('.footer-col h4')[1].textContent = t.footer.quick;
+            document.querySelectorAll('.footer-col h4')[2].textContent = t.footer.resources;
+            document.querySelectorAll('.footer-col h4')[3].textContent = t.footer.legal;
+            document.querySelector('.footer-text').textContent = t.footer.copy;
+            const badges = document.querySelectorAll('.security-badge');
+            badges[0].innerHTML = '&#128274; ' + t.footer.badges[0];
+            badges[1].innerHTML = '&#9989; ' + t.footer.badges[1];
+            badges[2].innerHTML = '&#127919; ' + t.footer.badges[2];
+
+            // Chat
+            document.querySelector('.chat-header').innerHTML = '&#128172; ' + t.chat.title;
+            document.querySelector('.chat-messages .chat-message p').textContent = t.chat.welcome;
+            document.getElementById('chatInput').placeholder = t.chat.placeholder;
+
+            // Cookie
+            document.querySelector('.cookie-text').innerHTML = '&#127850; ' + t.cookie.text;
+            document.querySelector('.cookie-decline').textContent = t.cookie.decline;
+            document.querySelector('.cookie-accept').textContent = t.cookie.accept;
+
+            // Reset typing
+            phraseIndex = 0;
+            charIndex = 0;
+            isDeleting = false;
+        }
+
+        // Navigation
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.remove('active');
+                if (l.dataset.section === id) l.classList.add('active');
+            });
+            document.getElementById('navLinks').classList.remove('active');
+            window.scrollTo(0, 0);
+            if (id === 'home') animateStats();
+        }
+        document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', e => { e.preventDefault(); showSection(l.dataset.section); }));
+        document.getElementById('mobileMenu').addEventListener('click', () => document.getElementById('navLinks').classList.toggle('active'));
+
+        // Typing effect
+        let phraseIndex = 0, charIndex = 0, isDeleting = false;
+        function typeEffect() {
+            const phrases = translations[currentLang].phrases;
+            const current = phrases[phraseIndex];
+            const typed = document.getElementById('typed');
+            typed.textContent = current.substring(0, isDeleting ? --charIndex : ++charIndex);
+            let delay = isDeleting ? 50 : 100;
+            if (!isDeleting && charIndex === current.length) { delay = 2000; isDeleting = true; }
+            else if (isDeleting && charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; delay = 500; }
+            setTimeout(typeEffect, delay);
+        }
+
+        // Stats animation
+        function animateStats() {
+            document.querySelectorAll('.stat-number').forEach(stat => {
+                const target = parseInt(stat.dataset.count);
+                let current = 0;
+                const step = target / 100;
+                const counter = setInterval(() => {
+                    current += step;
+                    if (current >= target) { stat.textContent = target + '+'; clearInterval(counter); }
+                    else stat.textContent = Math.floor(current) + '+';
+                }, 20);
+            });
+        }
+
+        // Cart
+        function addToCart(name, price) {
+            cart.push({name, price});
+            document.getElementById('cartCount').textContent = cart.length;
+            showToast(translations[currentLang].toast.added);
+        }
+        function showCart() {
+            if (!cart.length) return showToast(translations[currentLang].toast.empty);
+            alert('Cart:\n' + cart.map(i => i.name + ': $' + i.price).join('\n') + '\n\nTotal: $' + cart.reduce((a,b) => a + b.price, 0));
+        }
+
+        // Toast
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Password checker
+        function checkPassword() {
+            const t = translations[currentLang].tools.password;
+            const pw = document.getElementById('passwordInput').value;
+            const fill = document.getElementById('strengthFill');
+            const result = document.getElementById('passwordResult');
+            let strength = 0, feedback = [];
+            if (pw.length >= 8) strength += 25; else feedback.push(t.tips[0]);
+            if (/[A-Z]/.test(pw)) strength += 25; else feedback.push(t.tips[1]);
+            if (/[0-9]/.test(pw)) strength += 25; else feedback.push(t.tips[2]);
+            if (/[^A-Za-z0-9]/.test(pw)) strength += 25; else feedback.push(t.tips[3]);
+            fill.style.width = strength + '%';
+            fill.style.background = strength < 50 ? '#ff6b6b' : strength < 75 ? '#ffd93d' : '#64ffda';
+            const label = strength < 50 ? t.weak : strength < 75 ? t.medium : t.strong;
+            result.innerHTML = '<strong>' + label + '</strong><br>' + (feedback.length ? feedback.join('، ') : t.great);
+        }
+
+        // ROI Calculator
+        function calculateROI() {
+            const t = translations[currentLang].tools.roi;
+            const revenue = parseFloat(document.getElementById('revenueInput').value) || 0;
+            const risk = parseFloat(document.getElementById('industryInput').value);
+            const potentialLoss = revenue * risk;
+            const investment = revenue * 0.01;
+            const roi = ((potentialLoss - investment) / investment * 100).toFixed(0);
+            document.getElementById('roiResult').innerHTML = revenue ? '<strong>' + t.breach + ':</strong> $' + potentialLoss.toLocaleString() + '<br><strong>' + t.investment + ':</strong> $' + investment.toLocaleString() + '<br><strong>' + t.roiLabel + ':</strong> ' + roi + '%' : t.result;
+        }
+
+        // Quiz
+        function checkQuiz(btn, answer) {
+            const t = translations[currentLang].tools.quiz;
+            document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+            btn.classList.add(answer);
+            document.getElementById('quizResult').style.display = 'block';
+            document.getElementById('quizResult').innerHTML = answer === 'correct' ? '<span style="color:var(--accent)">&#10004; ' + t.correct + '</span>' : '<span style="color:#ff6b6b">&#10008; ' + t.incorrect + '</span>';
+        }
+
+        // FAQ
+        function toggleFaq(el) { el.parentElement.classList.toggle('active'); }
+
+        // Booking
+        function selectSlot(el) {
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        // Chat
+        function toggleChat() { document.getElementById('chatBox').classList.toggle('active'); }
+        function sendChat() {
+            const t = translations[currentLang].chat;
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+            const messages = document.getElementById('chatMessages');
+            messages.innerHTML += '<div class="chat-message" style="text-align:right"><p style="background:var(--primary);color:var(--dark)">' + msg + '</p></div>';
+            input.value = '';
+            setTimeout(() => {
+                messages.innerHTML += '<div class="chat-message bot"><p>' + t.reply + '</p></div>';
+                messages.scrollTop = messages.scrollHeight;
+            }, 1000);
+        }
+
+        // Cookie
+        function acceptCookie() { localStorage.setItem('cookieAccepted', 'true'); hideCookie(); }
+        function hideCookie() { document.getElementById('cookieBanner').classList.remove('visible'); }
+
+        // Back to top
+        window.onscroll = () => document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 300);
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    </script>
+</body>
+</html>
