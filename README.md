@@ -2,10 +2,6 @@
 
 A professional cybersecurity services landing page with interactive tools and full Arabic/English bilingual support.
 
-## Live Demo
-
-🌐 [store.saoud.site](https://store.saoud.site)
-
 ## Features
 
 - **Service Packages** — Starter, Professional, and Enterprise tiers
